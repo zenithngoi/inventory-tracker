@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useBarcodeScanner } from "@/hooks/use-barcode-scanner";
 import { useEffect } from "react";
 import { XCircle, Loader2 } from "lucide-react";
+import { ManualBarcodeInput } from "./manual-barcode-input";
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
@@ -70,6 +71,13 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
               </Button>
             </div>
           )}
+        </div>
+        {/* Manual input fallback */}
+        <div className="mt-4">
+          <ManualBarcodeInput
+            onSubmit={onScan}
+            buttonLabel="Enter Barcode Manually"
+          />
         </div>
         
         {scanResult && (
