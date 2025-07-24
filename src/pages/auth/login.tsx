@@ -37,9 +37,9 @@ export default function LoginPage() {
     }
   };
 
-  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative">
+      {/* Language Switcher in top right */}
       <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher />
       </div>

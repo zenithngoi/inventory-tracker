@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function SettingsPage() {
   const { user, updateProfile, isSupabaseEnabled } = useAuth();
@@ -68,7 +69,11 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 relative">
+      {/* Language Switcher in top right */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
       <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
       
       <Tabs defaultValue="profile" className="space-y-4">

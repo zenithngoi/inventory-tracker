@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback } from 'react';
+import { BrowserMultiFormatReader, NotFoundException } from '@zxing/browser';
 
 interface UseBarcodeScanner {
   startScanning: () => void;
@@ -9,15 +10,16 @@ interface UseBarcodeScanner {
   error: string | null;
 }
 
-// Simplified mock barcode scanner that doesn't rely on external libraries
 export function useBarcodeScanner(): UseBarcodeScanner {
   const scannerRef = useRef<HTMLDivElement>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
 
   const stopScanning = useCallback(() => {
     setIsScanning(false);
+    codeReaderRef.current?.reset();
   }, []);
 
   const startScanning = useCallback(() => {
@@ -25,19 +27,28 @@ export function useBarcodeScanner(): UseBarcodeScanner {
       setError('Scanner reference not available');
       return;
     }
-
     setError(null);
     setScanResult(null);
     setIsScanning(true);
-    
-    // Mock barcode detection - in a real app this would use camera API
-    // For demo purposes, we'll simulate a scan after a short delay
-    setTimeout(() => {
-      // Generate a random barcode for testing
-      const mockBarcode = `ITEM${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
-      setScanResult(mockBarcode);
-      stopScanning();
-    }, 1500);
+
+    const codeReader = new BrowserMultiFormatReader();
+    codeReaderRef.current = codeReader;
+
+    codeReader.decodeFromVideoDevice(
+      undefined,
+      scannerRef.current,
+      (result, err) => {
+        if (result) {
+          setScanResult(result.getText());
+          stopScanning();
+        } else if (err && !(err instanceof NotFoundException)) {
+          setError('Scanning error: ' + err.message);
+        }
+      }
+    ).catch((e) => {
+      setError('Camera error: ' + e.message);
+      setIsScanning(false);
+    });
   }, [stopScanning]);
 
   return {
