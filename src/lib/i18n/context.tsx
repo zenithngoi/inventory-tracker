@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Locale, en, zhCN, msMY } from './translations';
-import { getUserLanguagePreference, setUserLanguagePreference, isEdgeConfigAvailable } from '../edge-config';
-import { useAuth } from '@/hooks/use-auth';
+import { getUserLanguagePreference, setUserLanguagePreference, isEdgeConfigAvailable } from './lib/edge-config';import { useAuth } from '@/hooks/use-auth';
 import { toast } from 'sonner';
 
 type Translation = {
