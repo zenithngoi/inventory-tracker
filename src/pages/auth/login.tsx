@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -37,7 +38,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative">
+      {/* Language Switcher in top right */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-md p-4">
         <div className="flex flex-col items-center mb-6">
           <div className="mb-4">
