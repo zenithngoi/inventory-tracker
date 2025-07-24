@@ -4,6 +4,7 @@ import { useBarcodeScanner } from "@/hooks/use-barcode-scanner";
 import { useEffect } from "react";
 import { XCircle, Loader2 } from "lucide-react";
 import { ManualBarcodeInput } from "./manual-barcode-input";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
@@ -19,6 +20,8 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
     scannerRef,
     error
   } = useBarcodeScanner();
+
+  const { t } = useLanguage();
 
   // Start scanning when component mounts
   useEffect(() => {
@@ -42,11 +45,11 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
       </div>
       
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Barcode Scanner</h3>
+        <h3 className="text-lg font-medium">{t('common.barcodeScanner')}</h3>
         
         {error && (
           <div className="bg-red-100 text-red-800 p-2 rounded text-sm">
-            {error}
+            {t('common.error')}: {error}
           </div>
         )}
         
@@ -57,17 +60,17 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
           {isScanning ? (
             <div className="flex flex-col items-center justify-center gap-2">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm font-medium">Scanning...</p>
+              <p className="text-sm font-medium">{t('common.scanning')}</p>
             </div>
           ) : scanResult ? (
             <div className="text-center">
-              <p className="text-green-600 font-medium">Scanned Successfully!</p>
+              <p className="text-green-600 font-medium">{t('common.scannedSuccessfully')}</p>
               <p className="font-mono text-sm">{scanResult}</p>
             </div>
           ) : (
             <div className="text-center">
               <Button onClick={startScanning}>
-                Start Scanner
+                {t('common.startScanner')}
               </Button>
             </div>
           )}
@@ -76,24 +79,24 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
         <div className="mt-4">
           <ManualBarcodeInput
             onSubmit={onScan}
-            buttonLabel="Enter Barcode Manually"
+            buttonLabel={t('common.enterBarcodeManually')}
           />
         </div>
         
         {scanResult && (
           <div className="p-2 bg-green-100 text-green-800 rounded text-center">
-            Barcode detected: <strong>{scanResult}</strong>
+            {t('common.barcodeDetected')}: <strong>{scanResult}</strong>
           </div>
         )}
         
         <div className="flex justify-between">
           {isScanning ? (
             <Button onClick={stopScanning} variant="destructive">
-              Stop Scanner
+              {t('common.stopScanner')}
             </Button>
           ) : (
             <Button onClick={startScanning} disabled={!!scanResult}>
-              {scanResult ? "Scan Complete" : "Start Scanner"}
+              {scanResult ? t('common.scanComplete') : t('common.startScanner')}
             </Button>
           )}
         </div>

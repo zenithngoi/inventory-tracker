@@ -2,6 +2,7 @@ import { useState, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface ManualBarcodeInputProps {
   onSubmit: (barcode: string) => void;
@@ -17,6 +18,7 @@ export function ManualBarcodeInput({
   className
 }: ManualBarcodeInputProps) {
   const [barcode, setBarcode] = useState("");
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,12 +34,12 @@ export function ManualBarcodeInput({
         type="text"
         value={barcode}
         onChange={(e) => setBarcode(e.target.value)}
-        placeholder="Enter barcode"
+        placeholder={t('common.manualInput')}
         className="flex-1"
       />
       <Button type="submit" disabled={!barcode.trim()}>
         {buttonIcon && <span className="mr-2">{buttonIcon}</span>}
-        {buttonLabel}
+        {buttonLabel || t('common.submit')}
       </Button>
     </form>
   );
