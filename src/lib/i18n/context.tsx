@@ -4,7 +4,6 @@ import { getUserLanguagePreference, setUserLanguagePreference, isEdgeConfigAvail
 import { toast } from 'sonner';
 import { Locale, en, zhCN, msMY } from './translations';
 
-
 type Translation = {
   [key: string]: string | Translation;
 };
