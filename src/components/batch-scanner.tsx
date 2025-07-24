@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Camera, Trash2, Scan, PackageX } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface BatchScannerProps {
   items: TransferItem[];
@@ -33,25 +34,22 @@ export default function BatchScanner({
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [currentQuantity, setCurrentQuantity] = useState(1);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Handle barcode scan
   const handleBarcodeScan = (barcode: string) => {
     // Check if we reached the maximum number of items
     if (items.length >= maxItems && !allowDuplicates) {
       toast({
-        title: "Maximum items reached",
-        description: `You can only scan up to ${maxItems} items`,
+        title: t('common.error'),
+        description: t('common.maxItemsReached', { max: maxItems }),
         variant: "destructive",
       });
       return;
     }
 
-    // Mock item lookup
-    const mockItem = {
-      id: `item-${Math.floor(Math.random() * 1000)}`,
-      name: `Item ${barcode.substring(0, 4)}`,
-      barcode: barcode,
-    };
+    // Use scanned barcode as item name if no lookup
+    const itemName = barcode;
     
     // Check if item already exists in the batch
     const existingIndex = items.findIndex(i => i.barcode === barcode);
@@ -61,32 +59,29 @@ export default function BatchScanner({
       const updatedItems = [...items];
       updatedItems[existingIndex].quantity += currentQuantity;
       onItemsChange(updatedItems);
-      
       toast({
-        title: "Quantity updated",
-        description: `${mockItem.name}: ${updatedItems[existingIndex].quantity} units`,
+        title: t('common.quantityUpdated'),
+        description: `${itemName}: ${updatedItems[existingIndex].quantity}`,
       });
     } else if (existingIndex >= 0 && !allowDuplicates) {
       toast({
-        title: "Item already added",
-        description: "This item is already in the batch",
+        title: t('common.error'),
+        description: t('common.itemAlreadyAdded'),
         variant: "destructive",
       });
     } else {
       // Add new item to batch
       const newBatchItem: TransferItem = {
         id: uuidv4(),
-        itemId: mockItem.id,
-        barcode: mockItem.barcode,
-        name: mockItem.name,
+        itemId: barcode,
+        barcode: barcode,
+        name: itemName,
         quantity: currentQuantity
       };
-      
       onItemsChange([...items, newBatchItem]);
-      
       toast({
-        title: "Item added",
-        description: `${mockItem.name} (${currentQuantity} units) added to batch`,
+        title: t('common.itemAdded'),
+        description: `${itemName} (${currentQuantity})`,
       });
     }
   };
@@ -142,16 +137,16 @@ export default function BatchScanner({
               <div className="flex gap-2 mt-1 flex-1">
                 <Button 
                   onClick={() => setIsScannerOpen(true)}
-                  className="flex-1"
+                  className="flex-1 text-lg py-4"
                 >
-                  <Camera className="mr-2 h-4 w-4" />
-                  Open Camera
+                  <Camera className="mr-2 h-6 w-6" />
+                  {t('common.openCamera')}
                 </Button>
                 <ManualBarcodeInput 
                   onSubmit={handleBarcodeScan} 
-                  buttonLabel="Add"
-                  buttonIcon={<Scan className="h-4 w-4" />}
-                  className="flex-1"
+                  buttonLabel={t('common.add')}
+                  buttonIcon={<Scan className="h-6 w-6" />}
+                  className="flex-1 text-lg py-4"
                 />
               </div>
             </div>
@@ -159,26 +154,26 @@ export default function BatchScanner({
           
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium">
-                Scanned Items {items.length > 0 ? `(${items.length})` : ""}
+              <h3 className="text-base font-medium">
+                {t('common.scannedItems')} {items.length > 0 ? `(${items.length})` : ""}
               </h3>
               {items.length > 0 && (
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={clearAllItems}
-                  className="h-8"
+                  className="h-12"
                 >
-                  <PackageX className="h-4 w-4 mr-1" />
-                  Clear All
+                  <PackageX className="h-6 w-6 mr-1" />
+                  {t('common.clearAll')}
                 </Button>
               )}
             </div>
             
             {items.length === 0 ? (
-              <div className="text-center py-6 border rounded-md bg-muted/30">
-                <p className="text-sm text-muted-foreground">
-                  No items scanned yet. Start scanning to add items.
+              <div className="text-center py-8 border rounded-md bg-muted/30">
+                <p className="text-lg text-muted-foreground">
+                  {t('common.noItemsScanned')}
                 </p>
               </div>
             ) : (
